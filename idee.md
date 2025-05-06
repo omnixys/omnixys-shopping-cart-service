@@ -1,0 +1,1 @@
+- ProductBundle für Kombinationen (z. B. "Set aus Handy + Hülle")

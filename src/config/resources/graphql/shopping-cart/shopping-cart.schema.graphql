@@ -1,0 +1,25 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+###############################################################################################
+# Q U E R I E S
+###############################################################################################
+type Query {
+  shoppingCart(id: ID!): ShoppingCart!
+  shoppingCartsByUser: ShoppingCart!
+  shoppingCarts(input: ShoppinCartSearchCriteria, page: pageInput): [ShoppingCart!]
+}
+###############################################################################################
+# M U T A T I O N S
+###############################################################################################
+type Mutation {
+  createShoppingCart(input: CreateShoppingCartInput!): CreatePayload!
+  deleteShoppingCartByCustomerIdOrCustomerUsername(customerId: ID, customerUsername: String): Boolean
+  deleteShoppingCartById(id: ID): Boolean
+
+  addItem(item: CreateItemInput!): ID
+  removeItem(id: ID!): Boolean
+  order(inventoryIds: [ID!]): Boolean
+}
+

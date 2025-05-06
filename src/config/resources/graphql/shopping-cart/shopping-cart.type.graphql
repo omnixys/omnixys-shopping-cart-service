@@ -1,0 +1,28 @@
+scalar DateTime
+
+type Item @key(fields: "id") {
+  id: ID!
+  version: Int!
+  quantity: Int!
+  inventoryId: ID!
+  price: Float!
+  name: String!
+  created: DateTime
+  updated: DateTime
+}
+
+type ShoppingCart {
+  id: ID!
+  version: Int!
+  totalAmount: Float!
+  isComplete: Boolean!
+  customerId: String!
+  customerUsername: String!
+  cartItems: [Item!]
+  created: DateTime
+  updated: DateTime
+}
+
+type CreatePayload {
+  id: ID!
+}

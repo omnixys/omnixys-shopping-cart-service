@@ -1,0 +1,19 @@
+input CreateShoppingCartInput {
+  customerId: ID!
+}
+input ShoppinCartSearchCriteria {
+  customerId: ID
+  productId: ID
+  quantity: Int
+}
+
+input CreateItemInput {
+  inventoryId: ID!
+  price: Float!
+  quantity: Int!
+}
+
+input pageInput {
+  number: String
+  size: String
+}
