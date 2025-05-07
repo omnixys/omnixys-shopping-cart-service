@@ -1,3 +1,4 @@
+// src/messaging/interface/kafka-event.interface.ts
 export interface KafkaEventContext {
     topic: string;
     partition: number;
@@ -7,7 +8,5 @@ export interface KafkaEventContext {
 }
 
 export interface KafkaEventHandler {
-    handle(data: unknown, context: KafkaEventContext): Promise<void>;
+    handle(topic: string, data: unknown, context: KafkaEventContext): Promise<void>;
 }
-
-export const KAFKA_EVENT_METADATA = 'KAFKA_EVENT_METADATA';

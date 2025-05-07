@@ -161,8 +161,8 @@ export class ShoppingCartReadService {
                         searchCriteria,
                         pageable,
                     );
-                    const buecher = await queryBuilder.getMany();
-                    if (buecher.length === 0) {
+                    const shoppingCarts = await queryBuilder.getMany();
+                    if (shoppingCarts.length === 0) {
                         this.#logger.debug('find: Keine Buecher gefunden');
                         throw new NotFoundException(
                             `Keine Buecher gefunden: ${JSON.stringify(searchCriteria)}, Seite ${pageable.number}}`,
@@ -176,7 +176,7 @@ export class ShoppingCartReadService {
                     this.#logger.debug('find: carts=%o', carts);
                     const totalElements = await queryBuilder.getCount();
                     return this.#createSlice(carts, totalElements);
-                
+
                 });
             } catch (error) {
                 handleSpanError(outerSpan, error, this.#logger, 'create');
@@ -208,22 +208,22 @@ export class ShoppingCartReadService {
 
     async #findAll(pageable: Pageable) {
         const queryBuilder = this.#queryBuilder.build(false, {}, pageable);
-        const buecher = await queryBuilder.getMany();
-        if (buecher.length === 0) {
+        const shoppingCarts = await queryBuilder.getMany();
+        if (shoppingCarts.length === 0) {
             throw new NotFoundException(
                 `Ungueltige Seite "${pageable.number}"`,
             );
         }
         const totalElements = await queryBuilder.getCount();
-        return this.#createSlice(buecher, totalElements);
+        return this.#createSlice(shoppingCarts, totalElements);
     }
 
-    #createSlice(buecher: ShoppingCart[], totalElements: number) {
-        const buchSlice: Slice<ShoppingCart> = {
-            content: buecher,
+    #createSlice(shoppingCarts: ShoppingCart[], totalElements: number) {
+        const shoppingCartSlice: Slice<ShoppingCart> = {
+            content: shoppingCarts,
             totalElements,
         };
-        this.#logger.debug('createSlice: buchSlice=%o', buchSlice);
-        return buchSlice;
+        this.#logger.debug('createSlice: shoppingCartSlice=%o', shoppingCartSlice);
+        return shoppingCartSlice;
     }
 }

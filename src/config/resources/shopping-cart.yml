@@ -34,7 +34,7 @@ db:
 # ==============================================================================
 kafka:
   host: localhost
-  groupId: gentlecorp-shopping-cart-service
+  groupId: omnixys-shopping-cart-service
 
 # ==============================================================================
 # K e y c l o a k

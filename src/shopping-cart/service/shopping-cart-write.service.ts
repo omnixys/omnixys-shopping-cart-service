@@ -7,11 +7,11 @@ import { UUID } from 'crypto';
 import { UpdateParams } from '../model/interface/queryParams.interface.js';
 import { VersionInvalidException, VersionOutdatedException } from '../errors/exceptions.js';
 import { Item } from '../model/entity/item.entity.js';
-import { KafkaConsumerService } from '../../kafka/kafka-consumer.service.js';
-import { getKafkaTopicsBy } from '../../kafka/kafka-topic.properties.js';
+import { KafkaConsumerService } from '../../messaging/kafka-consumer.service.js';
+import { getKafkaTopicsBy } from '../../messaging/kafka-topic.properties.js';
 import { LoggerService } from '../../logger/logger.service.js';
 import { LoggerPlus } from '../../logger/logger-plus.js';
-import { KafkaProducerService } from '../../kafka/kafka-producer.service.js';
+import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
 import { trace, Tracer, context as otelContext } from '@opentelemetry/api';
 import { handleSpanError } from '../utils/error.util.js';
 import { TraceContextProvider } from '../../trace/trace-context.provider.js';
@@ -52,7 +52,7 @@ export class ShoppingCartWriteService {
 
     async onModuleInit(): Promise<void> {
         await this.#kafkaConsumerService.consume(
-            { topics: getKafkaTopicsBy(['ShoppingCart']), },
+            { topics: getKafkaTopicsBy(['person', 'orchestrator']), },
         );
 
     }

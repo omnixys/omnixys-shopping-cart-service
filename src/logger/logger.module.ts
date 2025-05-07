@@ -2,7 +2,7 @@
 import { BannerService } from './banner.service.js';
 import { ResponseTimeInterceptor } from './response-time.interceptor.js';
 import { LoggerService } from './logger.service.js';
-import { KafkaModule } from '../kafka/kafka.module.js';
+import { KafkaModule } from '../messaging/kafka.module.js';
 
 
 /**

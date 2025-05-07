@@ -1,5 +1,5 @@
  import { forwardRef, Global, Module } from '@nestjs/common';
-import { KafkaModule } from '../kafka/kafka.module.js';
+import { KafkaModule } from '../messaging/kafka.module.js';
 import { TraceContextProvider } from './trace-context.provider.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TraceInterceptor } from './trace.interceptor.js';

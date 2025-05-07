@@ -4,23 +4,29 @@
  */
 
 export const KafkaTopics = {
-    ShoppingCart: {
-        CustomerCreated: 'shopping-cart.customer.created',
-        CustomerDeleted: 'shopping-cart.customer.deleted',
-        // DeletedSuccess: 'shopping-cart.deleted.success',
+    person: {
+        create: 'shopping-cart.create.person',
+        delete: 'shopping-cart.delete.person',
     },
-    Notification: {
-        SendMailCreate: 'notification.send.create.mail',
-        SendMailUpdate: 'notification.send.update.mail',
-        SendMailDelete: 'notification.send.delete.mail',
+    orchestrator: {
+        shutdown: 'shopping-cart.shutdown.orchestrator',
+        start: "shopping-cart.start.orchestrator",
+        restart:  "shopping-cart.restart.orchestrator",
+
+        all: {
+            shutdown: "all.shutdown.orchestrator",
+            start: "all.start.orchestrator",
+            restart: "all.restart.orchestrator",
+        }
     },
-    system: {
-        shutdownAll: 'system.shutdown',
+    notification: {
+        create: 'notification.create.shopping-cart',
+        update: 'notification.update.shopping-cart',
+        delete: 'notification.delete.shopping-cart',
     },
-    activity: {
-        log: 'activity.shopping-cart.log',
+    logStream: {
+        log: 'log-stream.log.shopping-cart',
     }
-    // Weitere Domains und Topics hier ergänzen
 } as const;
 
 /**

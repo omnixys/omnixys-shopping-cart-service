@@ -102,8 +102,8 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
     ): Promise<void> {
         const topic =
             eventType === 'create'
-                ? KafkaTopics.Notification.SendMailCreate
-                : KafkaTopics.Notification.SendMailDelete;
+                ? KafkaTopics.notification.create
+                : KafkaTopics.notification.delete;
 
         await this.sendEvent(topic, `sendMail.${eventType}`, payload, service, 'v1', trace);
     }

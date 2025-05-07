@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { entities } from './model/entity/entities.js';
 import { ShoppingCartReadService } from './service/shopping-cart-read.service.js';
 import { ShoppingCartQueryBuilder } from './service/query-builder.js';
-import { KafkaModule } from '../kafka/kafka.module.js';
+import { KafkaModule } from '../messaging/kafka.module.js';
 import { ShoppingCartQueryResolver } from './resolver/shopping-cart-query.resolver.js';
 import { KeycloakModule } from '../security/keycloak/keycloak.module.js';
 import { ShoppingCartMutationResolver } from './resolver/shopping-cart-mutation.resolver.js';

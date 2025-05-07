@@ -1,88 +1,76 @@
-# compiled output
-/dist
-/node_modules
-/build
+# Node
+node_modules/
+dist/
+.build/
+.nyc_output/
+coverage/
 
-# Generierte Dateien
-build
-.extras/doc/projekthandbuch/html/*
-.extras/doc/folien/*.html
-.extras/doc/api/*
-.extras/doc/ReadMe.html
-scripts/dependency-check-report.html
-node-ts
-temp
-tmp
-dependencies.svg
-
-# Sensible Daten (Passwort, Token, private Schluessel)
-.extras/compose/db/mysql/db_root_password.txt
-.extras/compose/db/postgres/db_password.txt
-.extras/lasttest-locust/__pycache__
-.extras/lasttest-locust/.venv
-.extras/postman
-.extras/*.png
-.extras/*.jpeg
-.extras/*.gif
-.extras/*.mp4
-.extras/*.mpeg
-.extras/*.mkv
-.extras/*.avi
-.extras/*.ogg
-.extras/*.webm
-src/config/resources/tls/key.pem
-sonar-project.properties
-
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# OS
-.DS_Store
-
-# Tests
-/coverage
-/.nyc_output
-.clinic
-__tests__/buch/__snapshots__
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
+# VSCode
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# temp directory
-.temp
-.tmp
-
-# Runtime data
+# Runtime
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Optional cache directories
+.cache/
+.rpt2_cache/
+.rts2_cache_*/
+.eslintcache
+.stylelintcache
+
+# dotenv files
+.env
+.env.*.local
+
+# MySQL (optional local files, if applicable)
+*.sql
+*.dump
+mysql_data/
+
+# IDEs & OS
+.DS_Store
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Jest snapshots
+__tests__/**/__snapshots__/
+
+# Temporary
+.tmp/
+.temp/
+temp/
+tmp/
+
+# Others
+node-ts
+scripts/dependency-check-report.html
+.extras/
+.extras/**/*.png
+.extras/**/*.gif
+.extras/**/*.mp4
+src/config/resources/tls/key.pem
+sonar-project.properties
