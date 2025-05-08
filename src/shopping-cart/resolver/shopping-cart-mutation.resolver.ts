@@ -82,15 +82,14 @@ export class ShoppingCartMutationResolver {
         return this.#shoppingCartWriteService.orderItems(inventoryIds, username);
     }
 
-    @Mutation('deleteShoppingCartByCustomerIdOrCustomerUsername')
+    @Mutation('deleteShoppingCartByCustomerId')
     @Roles({ roles: ['Admin'] })
     async delete(
         @Args('customerId') customerId: UUID,
-        @Args('customerUsername') customerUsername: string,
     ) {
-        this.#logger.debug('delete: id=%s, username=%s', customerId, customerUsername);
+        this.#logger.debug('delete: id=%s', customerId);
 
-        const deletePerformed = await this.#shoppingCartWriteService.delete({ customerId, customerUsername });
+        const deletePerformed = await this.#shoppingCartWriteService.delete({ customerId });
         this.#logger.debug('delete: deletePerformed=%s', deletePerformed);
         return deletePerformed;
     }
@@ -106,67 +105,4 @@ export class ShoppingCartMutationResolver {
         this.#logger.debug('delete: deletePerformed=%s', deletePerformed);
         return deletePerformed;
     }
-
-    // @Mutation()
-    // @Roles({ roles: ['gentlecorp-admin', 'gentlecorp-user'] })
-    // async update(@Args('input') updateShoppingCartInput: updateShoppingCartInput) {
-    //     this.#logger.debug('update: ShoppingCart=%o', updateShoppingCartInput);
-
-    //     const ShoppingCart = this.#ShoppingCartUpdateDtoToShoppingCart(updateShoppingCartInput);
-    //     const versionStr = `"${updateShoppingCartInput.version.toString()}"`;
-
-    //     const versionResult = await this.#orederWriteService.update({
-    //         id: updateShoppingCartInput.id,
-    //         ShoppingCart,
-    //         version: versionStr,
-    //     });
-    //     // TODO BadUserInputError
-    //     this.#logger.debug('updateShoppingCart: versionResult=%d', versionResult);
-    //     const payload: UpdatePayload = { version: versionResult };
-    //     return payload;
-    // }
-
-
-    // #ShoppingCartUpdateDtoToShoppingCart(ShoppingCartDTO: updateShoppingCartInput): ShoppingCart {
-    //     return {
-    //         id: undefined,
-    //         version: undefined,
-    //         ShoppingCartNumber: undefined,
-    //         status: ShoppingCartDTO.status,
-    //         totalAmount: undefined,
-    //         isComplete: undefined,
-    //         items: undefined,
-    //         customerId: undefined,
-    //         created: undefined,
-    //         updated: new Date(),
-    //     };
-    // }
-
-    // #errorMsgCreateShoppingCart(err: CreateError) {
-    //     switch (err.type) {
-    //         case 'IsbnExists': {
-    //             return `Die ISBN ${err.isbn} existiert bereits`;
-    //         }
-    //         default: {
-    //             return 'Unbekannter Fehler';
-    //         }
-    //     }
-    // }
-
-    // #errorMsgUpdateShoppingCart(err: UpdateError) {
-    //     switch (err.type) {
-    //         case 'ShoppingCartNotExists': {
-    //             return `Es gibt kein ShoppingCart mit der ID ${err.id}`;
-    //         }
-    //         case 'VersionInvalid': {
-    //             return `"${err.version}" ist keine gueltige Versionsnummer`;
-    //         }
-    //         case 'VersionOutdated': {
-    //             return `Die Versionsnummer "${err.version}" ist nicht mehr aktuell`;
-    //         }
-    //         default: {
-    //             return 'Unbekannter Fehler';
-    //         }
-    //     }
-    // }
 }

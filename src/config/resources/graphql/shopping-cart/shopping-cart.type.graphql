@@ -17,7 +17,6 @@ type ShoppingCart {
   totalAmount: Float!
   isComplete: Boolean!
   customerId: String!
-  customerUsername: String!
   cartItems: [Item!]
   created: DateTime
   updated: DateTime

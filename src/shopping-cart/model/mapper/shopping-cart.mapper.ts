@@ -15,7 +15,6 @@ export function createShoppingCartInputToEntity(
         id: undefined,
         version: undefined,
         customerId: input.customerId,
-        customerUsername: input.customerUsername,
         totalAmount: undefined,
         isComplete: undefined,
         cartItems: undefined,

@@ -103,14 +103,14 @@ export class ShoppingCartWriteService {
     }
 
 
-    async addItem(newItem: Item, customerUsername: string): Promise<UUID> {
+    async addItem(newItem: Item, customerId: UUID): Promise<UUID> {
        return await this.#tracer.startActiveSpan('shopping-cart.addItem', async (span) => {
            try {
                return await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
 
-                   this.#logger.debug('addItem: item=%o, username=%s', newItem, customerUsername);
+                   this.#logger.debug('addItem: item=%o, username=%s', newItem, customerId);
 
-                   const shoppingCart = await this.#readService.findByUsernameOrCustomerId({ customerUsername });
+                   const shoppingCart = await this.#readService.findByCustomerId({ customerId });
                    newItem.shoppingCart = shoppingCart
                    const savedItem = await this.#itemRepository.save(newItem);
                    this.#logger.debug('addItem: savedItem=%o', savedItem);
@@ -157,13 +157,13 @@ export class ShoppingCartWriteService {
  * @param customerUsername Benutzername des Kunden
  * @returns true, wenn erfolgreich verarbeitet
  */
-    async orderItems(inventoryIds: string[], customerUsername: string): Promise<boolean>{
+    async orderItems(inventoryIds: string[], customerId: UUID): Promise<boolean>{
         return await this.#tracer.startActiveSpan('shopping-cart.orderItems', async (span) => {
             try {
                 return await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
-                    this.#logger.debug('orderItems: inventoryIds=%o, username=%s', inventoryIds, customerUsername);
+                    this.#logger.debug('orderItems: inventoryIds=%o, customerId=%s', inventoryIds, customerId);
 
-                    const cart = await this.#readService.findByUsernameOrCustomerId({ customerUsername });
+                    const cart = await this.#readService.findByCustomerId({ customerId });
 
                     const itemsToDelete = await this.#itemRepository.find({
                         where: {
@@ -233,14 +233,14 @@ export class ShoppingCartWriteService {
  * @throws NotFoundException, wenn der Warenkorb nicht existiert.
  */
     async delete(
-        { customerId, customerUsername }: { customerId?: UUID, customerUsername?: string }
+        { customerId }: { customerId?: UUID }
     ): Promise<boolean>{
         return await this.#tracer.startActiveSpan('shopping-cart.delete', async (span) => {
             try {
                 return await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
-                    this.#logger.debug('delete: id=%s, customerUsername=%s', customerId, customerUsername);
+                    this.#logger.debug('delete: id=%s', customerId);
 
-                    const shoppingCart = await this.#readService.findByUsernameOrCustomerId({ customerId, customerUsername });
+                    const shoppingCart = await this.#readService.findByCustomerId({ customerId });
 
                     this.#logger.debug('delete: shoppingCart=%o', shoppingCart)
 
@@ -266,7 +266,7 @@ export class ShoppingCartWriteService {
                     if (wasDeleted) {
                         await this.#kafkaProducerService.sendMailNotification(
                             'delete',
-                            { customerId, customerUsername },
+                            { customerId },
                             'shopping-cart-service',
                             trace,
                         );

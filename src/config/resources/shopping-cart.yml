@@ -18,7 +18,7 @@ db:
   #type: sqlite
 
   username: shopping_cart_db_user
-  password: GentleCorp22.03.2024
+  password: Omnixys08.05.2025
   populate: true
 
   host: localhost

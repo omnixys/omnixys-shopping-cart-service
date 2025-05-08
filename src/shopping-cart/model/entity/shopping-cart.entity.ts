@@ -24,9 +24,6 @@ export class ShoppingCart {
     @Column()
     customerId: string | undefined;
 
-    @Column()
-    customerUsername: string | undefined;
-
     @OneToMany(() => Item, (item) => item.shoppingCart, {
         cascade: [`insert`, `remove`],
     })
@@ -56,7 +53,6 @@ export class ShoppingCart {
             version: this.version,
             totalAmount: this.totalAmount,
             customerId: this.customerId,
-            customerUsername: this.customerUsername,
             isComplete: this.isComplete,
             cartItems: this.cartItems,
             created: this.created,

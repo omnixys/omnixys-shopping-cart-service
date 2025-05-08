@@ -73,7 +73,7 @@ export class ShoppingCartReadService {
                     return cart;
                 });
             } catch (error) {
-                handleSpanError(outerSpan, error, this.#logger, 'create');
+                handleSpanError(outerSpan, error, this.#logger, 'findById');
             } finally {
                 outerSpan.end();
             }
@@ -89,15 +89,15 @@ export class ShoppingCartReadService {
     * @throws NotFoundException Wenn kein passender Warenkorb gefunden wurde
     * @returns Der Warenkorb mit berechnetem Gesamtbetrag und Status
     */
-    async findByUsernameOrCustomerId({ customerUsername, customerId }: { customerUsername?: string, customerId?: UUID }) {
-        return await this.#tracer.startActiveSpan('shopping-cart-service.read.find-by-username', async (outerSpan) => {
+    async findByCustomerId({ customerId }: { customerId: UUID }) {
+        return await this.#tracer.startActiveSpan('shopping-cart-service.read.find-by-customer-id', async (outerSpan) => {
             try {
                 return await otelContext.with(trace.setSpan(otelContext.active(), outerSpan), async () => {
-                    this.#logger.debug('findByUsernameOrCustomerId: username=%s, customerId=%s', customerUsername, customerId);
+                    this.#logger.debug('findByCustomerId: customerId=%s', customerId);
 
                     const cart = await this.#tracer.startActiveSpan('shopping-cart-repository.find-by-id', async (span) => {
                         try {
-                            return await this.#queryBuilder.buildUsernameOrCustomerId({ customerId, customerUsername }).getOne();
+                            return await this.#queryBuilder.buildUsernameOrCustomerId({ customerId }).getOne();
                         } catch (error) {
                             handleSpanError(span, error, this.#logger, 'save');
                         } finally {
@@ -105,11 +105,11 @@ export class ShoppingCartReadService {
                         }
                     });
                     if (cart === null) {
-                        throw new NotFoundException(`No cart found with Username ${customerUsername}.`);
+                        throw new NotFoundException(`No cart found with CustomerId ${customerId}.`);
                     }
 
-                    this.#logger.debug('findById: cart=%s', cart);
-                    this.#logger.debug('findById: abbildungen=%o', cart.cartItems);
+                    this.#logger.debug('findByCustomerId: cart=%s', cart);
+                    this.#logger.debug('findByCustomerId: abbildungen=%o', cart.cartItems);
 
                     const { totalAmount, isComplete } = await this.#calculateCartSummary(cart);
                     cart.isComplete = isComplete;
@@ -137,7 +137,7 @@ export class ShoppingCartReadService {
         searchCriteria: SearchCriteria,
         pageable: Pageable,
     ): Promise<Slice<ShoppingCart>> {
-        return await this.#tracer.startActiveSpan('shopping-cart-service.read.find-by-username', async (outerSpan) => {
+        return await this.#tracer.startActiveSpan('shopping-cart-service.read.find', async (outerSpan) => {
             try {
                 return await otelContext.with(trace.setSpan(otelContext.active(), outerSpan), async () => {
                     const withItems = false;
@@ -161,13 +161,6 @@ export class ShoppingCartReadService {
                         searchCriteria,
                         pageable,
                     );
-                    const shoppingCarts = await queryBuilder.getMany();
-                    if (shoppingCarts.length === 0) {
-                        this.#logger.debug('find: Keine Buecher gefunden');
-                        throw new NotFoundException(
-                            `Keine Buecher gefunden: ${JSON.stringify(searchCriteria)}, Seite ${pageable.number}}`,
-                        );
-                    }
 
                     const carts: ShoppingCart[] = await this.#queryBuilder
                         .build(withItems, searchCriteria, pageable)
@@ -179,7 +172,7 @@ export class ShoppingCartReadService {
 
                 });
             } catch (error) {
-                handleSpanError(outerSpan, error, this.#logger, 'create');
+                handleSpanError(outerSpan, error, this.#logger, 'find');
             } finally {
                 outerSpan.end();
             }

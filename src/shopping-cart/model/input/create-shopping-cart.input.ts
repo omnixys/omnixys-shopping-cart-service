@@ -9,5 +9,4 @@ export class CreateShoppingCartInput {
      */
     @IsUUID()
     customerId!: string;
-    customerUsername!: string;
 }

@@ -7,7 +7,7 @@ schema {
 ###############################################################################################
 type Query {
   shoppingCart(id: ID!): ShoppingCart!
-  shoppingCartsByUser: ShoppingCart!
+  shoppingCartsByCustomerId(customerId: ID): ShoppingCart!
   shoppingCarts(input: ShoppinCartSearchCriteria, page: pageInput): [ShoppingCart!]
 }
 ###############################################################################################
@@ -15,7 +15,7 @@ type Query {
 ###############################################################################################
 type Mutation {
   createShoppingCart(input: CreateShoppingCartInput!): CreatePayload!
-  deleteShoppingCartByCustomerIdOrCustomerUsername(customerId: ID, customerUsername: String): Boolean
+  deleteShoppingCartByCustomerId(customerId: ID, customerUsername: String): Boolean
   deleteShoppingCartById(id: ID): Boolean
 
   addItem(item: CreateItemInput!): ID
