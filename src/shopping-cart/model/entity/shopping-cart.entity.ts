@@ -22,7 +22,7 @@ export class ShoppingCart {
     version: number | undefined;
 
     @Column()
-    customerId: string | undefined;
+    customerId: UUID | undefined;
 
     @OneToMany(() => Item, (item) => item.shoppingCart, {
         cascade: [`insert`, `remove`],

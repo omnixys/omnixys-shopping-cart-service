@@ -124,6 +124,38 @@ export class ShoppingCartWriteService {
         });
     }
 
+    async addItemAndReserve(newItem: Item, customerId: UUID): Promise<UUID> {
+        return await this.#tracer.startActiveSpan('shopping-cart.addItem', async (span) => {
+            try {
+                return await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
+
+                    this.#logger.debug('addItem: item=%o, username=%s', newItem, customerId);
+
+                    const shoppingCart = await this.#readService.findByCustomerId({ customerId });
+                    newItem.shoppingCart = shoppingCart
+                    const savedItem = await this.#itemRepository.save(newItem);
+                    this.#logger.debug('addItem: savedItem=%o', savedItem);
+
+                    const trace = this.#traceContextProvider.getContext();
+
+                    this.#kafkaProducerService.reserveItem(
+                        {
+                            item: [newItem],
+                            customerId
+                        },
+                        'shopping-cart.read-service',
+                        trace,
+                    )
+                    return savedItem.id!;
+                });
+            } catch (error) {
+                handleSpanError(span, error, this.#logger, 'addItem');
+            } finally {
+                span.end();
+            }
+        });
+    }
+
     async removeItem(id: UUID): Promise<boolean> {
        return await this.#tracer.startActiveSpan('shopping-cart.removeItem', async (span) => {
            try {

@@ -26,6 +26,10 @@ export const KafkaTopics = {
     },
     logStream: {
         log: 'log-stream.log.shopping-cart',
+    },
+    inventory: {
+        reserve: 'inventory.reserve-item.shopping-cart',
+        release: 'inventory.release-item.shopping-cart',
     }
 } as const;
 

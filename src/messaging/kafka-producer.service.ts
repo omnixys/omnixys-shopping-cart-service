@@ -91,6 +91,15 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
         }
     }
 
+    async reserveItem(
+        payload: unknown,
+        service: string,
+        trace?: TraceContext,
+    ): Promise<void> {
+        const topic = KafkaTopics.inventory.reserve;
+        await this.sendEvent(topic, 'reserveItem', payload, service, 'v1', trace);
+    }
+
     /**
    * Spezifischer Shortcut zum Versenden von Mail-Nachrichten.
    */

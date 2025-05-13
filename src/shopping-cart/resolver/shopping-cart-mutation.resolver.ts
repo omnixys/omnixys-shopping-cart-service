@@ -62,6 +62,19 @@ export class ShoppingCartMutationResolver {
         return itemId;
     }
 
+    @Mutation('addItemAndReserve')
+    @Roles({ roles: ['Admin', 'Supreme', 'User'] })
+    async addItemAndReserve(
+        @Args('item') itemInput: CreateItemInput,
+        @Args('customerID') customerId: UUID,
+    ) {
+        this.#logger.debug('addItem: input=%o', itemInput);
+        const item = createItemInputToEntity(itemInput);
+        const itemId = await this.#shoppingCartWriteService.addItemAndReserve(item, customerId);
+        this.#logger.debug('addItem: id=%s', itemId);
+        return itemId;
+    }
+
     @Mutation('removeItem')
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
     async removeItem(
@@ -74,12 +87,11 @@ export class ShoppingCartMutationResolver {
     @Mutation('order')
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
     async order(
+        @Args('customerId') customerId: UUID,
         @Args('inventoryIds') inventoryIds: UUID[],
-        @Context() context: any
     ){
         this.#logger.debug('order: inventoryIds=%o', inventoryIds);
-        const { username } = await this.#keycloakService.getToken(context);
-        return this.#shoppingCartWriteService.orderItems(inventoryIds, username);
+        return this.#shoppingCartWriteService.orderItems(inventoryIds, customerId);
     }
 
     @Mutation('deleteShoppingCartByCustomerId')

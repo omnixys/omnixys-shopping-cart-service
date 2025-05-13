@@ -118,7 +118,7 @@ export class ShoppingCartReadService {
                     return cart;
                 });
             } catch (error) {
-                handleSpanError(outerSpan, error, this.#logger, 'create');
+                handleSpanError(outerSpan, error, this.#logger, 'findByCustomerId');
             } finally {
                 outerSpan.end();
             }

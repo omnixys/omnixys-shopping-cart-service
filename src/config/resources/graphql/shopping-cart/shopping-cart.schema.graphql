@@ -19,7 +19,8 @@ type Mutation {
   deleteShoppingCartById(id: ID): Boolean
 
   addItem(item: CreateItemInput!): ID
+  addItemAndReserve(item: CreateItemInput!, customerId: ID!): ID
   removeItem(id: ID!): Boolean
-  order(inventoryIds: [ID!]): Boolean
+  order(inventoryIds: [ID!], customerId: ID): Boolean
 }
 
