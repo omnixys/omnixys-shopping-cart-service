@@ -100,6 +100,15 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
         await this.sendEvent(topic, 'reserveItem', payload, service, 'v1', trace);
     }
 
+    async releaseItem(
+        payload: unknown,
+        service: string,
+        trace?: TraceContext,
+    ): Promise<void> {
+        const topic = KafkaTopics.inventory.release;
+        await this.sendEvent(topic, 'releaseItem', payload, service, 'v1', trace);
+    }
+
     /**
    * Spezifischer Shortcut zum Versenden von Mail-Nachrichten.
    */

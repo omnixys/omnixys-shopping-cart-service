@@ -66,7 +66,7 @@ export class ShoppingCartMutationResolver {
     @Roles({ roles: ['Admin', 'Supreme', 'User'] })
     async addItemAndReserve(
         @Args('item') itemInput: CreateItemInput,
-        @Args('customerID') customerId: UUID,
+        @Args('customerId') customerId: UUID,
     ) {
         this.#logger.debug('addItem: input=%o', itemInput);
         const item = createItemInputToEntity(itemInput);
@@ -79,9 +79,10 @@ export class ShoppingCartMutationResolver {
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
     async removeItem(
         @Args('id') id: UUID,
+        @Args('customerId') customerId: UUID,
     ) {
         this.#logger.debug('removeItem: id=%s', id);
-        return this.#shoppingCartWriteService.removeItem(id);
+        return this.#shoppingCartWriteService.removeItem(id, customerId);
     }
 
     @Mutation('order')

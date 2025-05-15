@@ -140,7 +140,7 @@ export class ShoppingCartWriteService {
 
                     this.#kafkaProducerService.reserveItem(
                         {
-                            item: [newItem],
+                            item: newItem,
                             customerId
                         },
                         'shopping-cart.read-service',
@@ -156,19 +156,29 @@ export class ShoppingCartWriteService {
         });
     }
 
-    async removeItem(id: UUID): Promise<boolean> {
+    async removeItem(id: UUID, customerId: UUID): Promise<boolean> {
        return await this.#tracer.startActiveSpan('shopping-cart.removeItem', async (span) => {
            try {
                return await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
                    this.#logger.debug('removeItem: id=%s', id);
 
                    const item = await this.#itemRepository.findOne({ where: { id } });
+                   this.#logger.debug('removeItem: item=%o', item);
 
                    if (!item) {
                        this.#logger.warn(`removeItem: Item mit ID ${id} nicht gefunden`);
                        throw new NotFoundException(`Es gibt kein Item mit der ID ${id}.`);
                    }
 
+                   const trace = this.#traceContextProvider.getContext();
+                   this.#kafkaProducerService.releaseItem(
+                       {
+                           item,
+                           customerId
+                       },
+                       'shopping-cart.read-service',
+                       trace,
+                   )
                    await this.#itemRepository.remove(item);
 
                    this.#logger.debug('removeItem: erfolgreich entfernt');

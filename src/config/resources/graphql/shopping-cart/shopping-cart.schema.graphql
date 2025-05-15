@@ -20,7 +20,7 @@ type Mutation {
 
   addItem(item: CreateItemInput!): ID
   addItemAndReserve(item: CreateItemInput!, customerId: ID!): ID
-  removeItem(id: ID!): Boolean
+  removeItem(id: ID!, customerId: ID!): Boolean
   order(inventoryIds: [ID!], customerId: ID): Boolean
 }
 
