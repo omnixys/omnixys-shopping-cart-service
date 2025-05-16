@@ -24,8 +24,8 @@ export const KafkaTopics = {
         update: 'notification.update.shopping-cart',
         delete: 'notification.delete.shopping-cart',
     },
-    logStream: {
-        log: 'log-stream.log.shopping-cart',
+    logstream: {
+        log: 'logstream.log.shopping-cart',
     },
     inventory: {
         reserve: 'inventory.reserve-item.shopping-cart',
