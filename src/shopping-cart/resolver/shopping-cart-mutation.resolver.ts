@@ -23,7 +23,7 @@ export class ShoppingCartMutationResolver {
     readonly #shoppingCartWriteService: ShoppingCartWriteService;
     readonly #keycloakService: KeycloakService;
     readonly #loggerService: LoggerService;
-    readonly #logger: LoggerPlus
+    readonly #logger: LoggerPlus;
 
     constructor(
         ShoppingCartWriteService: ShoppingCartWriteService,
@@ -33,14 +33,23 @@ export class ShoppingCartMutationResolver {
         this.#shoppingCartWriteService = ShoppingCartWriteService;
         this.#keycloakService = keycloakservice;
         this.#loggerService = loggerService;
-        this.#logger = this.#loggerService.getLogger(ShoppingCartMutationResolver.name);
+        this.#logger = this.#loggerService.getLogger(
+            ShoppingCartMutationResolver.name,
+        );
     }
 
     @Mutation('createShoppingCart')
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
-    async create(@Args('input') createShoppingCartInput: CreateShoppingCartInput) {
-        this.#logger.debug('create: ShoppingCartDTO=%o', createShoppingCartInput);
-        const ShoppingCart = createShoppingCartInputToEntity(createShoppingCartInput);
+    async create(
+        @Args('input') createShoppingCartInput: CreateShoppingCartInput,
+    ) {
+        this.#logger.debug(
+            'create: ShoppingCartDTO=%o',
+            createShoppingCartInput,
+        );
+        const ShoppingCart = createShoppingCartInputToEntity(
+            createShoppingCartInput,
+        );
         const id = await this.#shoppingCartWriteService.create(ShoppingCart);
         // TODO BadUserInputError
         this.#logger.debug('createShoppingCart: id=%s', id);
@@ -52,12 +61,15 @@ export class ShoppingCartMutationResolver {
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
     async addItem(
         @Args('item') itemInput: CreateItemInput,
-        @Context() context: any
-    ){
+        @Context() context: any,
+    ) {
         this.#logger.debug('addItem: input=%o', itemInput);
         const { username } = await this.#keycloakService.getToken(context);
         const item = createItemInputToEntity(itemInput);
-        const itemId = await this.#shoppingCartWriteService.addItem(item, username);
+        const itemId = await this.#shoppingCartWriteService.addItem(
+            item,
+            username,
+        );
         this.#logger.debug('addItem: id=%s', itemId);
         return itemId;
     }
@@ -70,7 +82,10 @@ export class ShoppingCartMutationResolver {
     ) {
         this.#logger.debug('addItem: input=%o', itemInput);
         const item = createItemInputToEntity(itemInput);
-        const itemId = await this.#shoppingCartWriteService.addItemAndReserve(item, customerId);
+        const itemId = await this.#shoppingCartWriteService.addItemAndReserve(
+            item,
+            customerId,
+        );
         this.#logger.debug('addItem: id=%s', itemId);
         return itemId;
     }
@@ -90,31 +105,33 @@ export class ShoppingCartMutationResolver {
     async order(
         @Args('customerId') customerId: UUID,
         @Args('inventoryIds') inventoryIds: UUID[],
-    ){
+    ) {
         this.#logger.debug('order: inventoryIds=%o', inventoryIds);
-        return this.#shoppingCartWriteService.orderItems(inventoryIds, customerId);
+        return this.#shoppingCartWriteService.orderItems(
+            inventoryIds,
+            customerId,
+        );
     }
 
     @Mutation('deleteShoppingCartByCustomerId')
     @Roles({ roles: ['Admin'] })
-    async delete(
-        @Args('customerId') customerId: UUID,
-    ) {
+    async delete(@Args('customerId') customerId: UUID) {
         this.#logger.debug('delete: id=%s', customerId);
 
-        const deletePerformed = await this.#shoppingCartWriteService.delete({ customerId });
+        const deletePerformed = await this.#shoppingCartWriteService.delete({
+            customerId,
+        });
         this.#logger.debug('delete: deletePerformed=%s', deletePerformed);
         return deletePerformed;
     }
 
     @Mutation('deleteShoppingCartById')
     @Roles({ roles: ['Admin'] })
-    async deleteById(
-        @Args('id') id: UUID,
-    ) {
+    async deleteById(@Args('id') id: UUID) {
         this.#logger.debug('deleteById: id=%s', id);
 
-        const deletePerformed = await this.#shoppingCartWriteService.deleteById(id);
+        const deletePerformed =
+            await this.#shoppingCartWriteService.deleteById(id);
         this.#logger.debug('delete: deletePerformed=%s', deletePerformed);
         return deletePerformed;
     }

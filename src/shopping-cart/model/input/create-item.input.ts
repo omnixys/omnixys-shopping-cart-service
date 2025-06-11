@@ -1,6 +1,13 @@
-
 import { Transform } from 'class-transformer';
-import { IsInt, IsPositive, IsUUID, Validate, ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+import {
+    IsInt,
+    IsPositive,
+    IsUUID,
+    Validate,
+    ValidationArguments,
+    ValidatorConstraint,
+    ValidatorConstraintInterface,
+} from 'class-validator';
 import { UUID } from 'crypto';
 import Decimal from 'decimal.js';
 

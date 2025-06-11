@@ -1,9 +1,7 @@
-import { Item } from "../entity/item.entity";
-import { CreateItemInput } from "../input/create-item.input";
+import { Item } from '../entity/item.entity';
+import { CreateItemInput } from '../input/create-item.input';
 
-export function createItemInputToEntity(
-    input: CreateItemInput,
-): Item {
+export function createItemInputToEntity(input: CreateItemInput): Item {
     return {
         id: undefined,
         version: undefined,

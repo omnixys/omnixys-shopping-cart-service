@@ -11,7 +11,6 @@ import { LoggerPlus } from '../../logger/logger-plus.js';
 import { LoggerService } from '../../logger/logger.service.js';
 import { UUID } from 'crypto';
 
-
 export type SuchkriterienInput = {
     readonly suchkriterien: SearchCriteria;
 };
@@ -30,26 +29,29 @@ export class ShoppingCartQueryResolver {
     ) {
         this.shoppingCartReadService = shoppingCartReadService;
         this.#loggerService = loggerService;
-        this.#logger = this.#loggerService.getLogger(ShoppingCartQueryResolver.name);
+        this.#logger = this.#loggerService.getLogger(
+            ShoppingCartQueryResolver.name,
+        );
     }
 
     @Query('shoppingCart')
     @Roles({ roles: ['Admin', 'User'] })
-    async getById(
-        @Args() { id, withItems }: FindByIdParams,
-    ) {
+    async getById(@Args() { id, withItems }: FindByIdParams) {
         this.#logger.debug('findById: id=%d, withItems=%s', id, withItems);
-        const shoppingCart = await this.shoppingCartReadService.findById({ id, withItems });
+        const shoppingCart = await this.shoppingCartReadService.findById({
+            id,
+            withItems,
+        });
         return shoppingCart;
     }
 
     @Query('shoppingCartsByCustomerId')
     @Roles({ roles: ['Admin', 'Basic', 'Supreme', 'Elite', 'User'] })
-    async getByCustomer(
-        @Args('customerId') customerId: UUID,
-    ) {
-        this.#logger.debug('getByCustomerId: customerId=%s', customerId)
-        const shoppingCart = this.shoppingCartReadService.findByCustomerId({ customerId })
+    async getByCustomer(@Args('customerId') customerId: UUID) {
+        this.#logger.debug('getByCustomerId: customerId=%s', customerId);
+        const shoppingCart = this.shoppingCartReadService.findByCustomerId({
+            customerId,
+        });
         this.#logger.debug('getByCustomerId: shoppingCart=%o');
         return shoppingCart;
     }
@@ -58,12 +60,12 @@ export class ShoppingCartQueryResolver {
     @Roles({ roles: ['Admin'] })
     async find(
         @Args() input: SuchkriterienInput | undefined,
-        @Args('page') pageableInput: {size: string, number: string}
+        @Args('page') pageableInput: { size: string; number: string },
     ) {
         this.#logger.debug('find: input=%o', input);
 
         const { size, number } = pageableInput;
-        const pageable = createPageable({size, number});
+        const pageable = createPageable({ size, number });
         const shoppingCartSlice = await this.shoppingCartReadService.find(
             input?.suchkriterien,
             pageable,

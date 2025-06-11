@@ -45,7 +45,6 @@ export class ShoppingCart {
     @Exclude()
     isComplete: boolean | undefined;
 
-
     // toString Methode hinzufügen
     public toString = (): string => {
         return JSON.stringify({

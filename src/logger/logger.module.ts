@@ -1,9 +1,8 @@
- import { Global, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { BannerService } from './banner.service.js';
 import { ResponseTimeInterceptor } from './response-time.interceptor.js';
 import { LoggerService } from './logger.service.js';
 import { KafkaModule } from '../messaging/kafka.module.js';
-
 
 /**
  * Das Modul besteht aus allgemeinen Services, z.B. MailService.
@@ -16,15 +15,7 @@ import { KafkaModule } from '../messaging/kafka.module.js';
 @Global()
 @Module({
     imports: [KafkaModule],
-        providers: [
-            BannerService,
-            ResponseTimeInterceptor,
-            LoggerService,
-        ],
-        exports: [
-            BannerService,
-            ResponseTimeInterceptor,
-            LoggerService,
-        ],
+    providers: [BannerService, ResponseTimeInterceptor, LoggerService],
+    exports: [BannerService, ResponseTimeInterceptor, LoggerService],
 })
 export class LoggerModule {}

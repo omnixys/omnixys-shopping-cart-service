@@ -25,7 +25,8 @@ export class BannerService implements OnApplicationBootstrap {
      * @description Wird beim Bootstrap der Anwendung ausgeführt, um Anwendungsinformationen und ein Banner auszugeben.
      */
     onApplicationBootstrap() {
-        const { host, nodeEnv, port, databaseName, httpsOptions, tempo } = nodeConfig;
+        const { host, nodeEnv, port, databaseName, httpsOptions, tempo } =
+            nodeConfig;
 
         // Überprüfen, ob HTTPS oder HTTP verwendet wird
         const protocol = httpsOptions === undefined ? 'http' : 'https';

@@ -22,7 +22,7 @@ import { ShoppingCartWriteService } from './service/shopping-cart-write.service.
         ShoppingCartWriteService,
         ShoppingCartQueryBuilder,
         ShoppingCartQueryResolver,
-        ShoppingCartMutationResolver
+        ShoppingCartMutationResolver,
     ],
     // Export der Provider fuer DI in anderen Modulen
     exports: [ShoppingCartReadService, ShoppingCartWriteService],

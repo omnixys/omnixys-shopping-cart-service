@@ -17,7 +17,9 @@ export class TraceContextUtil {
      *
      * Unterstützt sowohl B3- als auch W3C Trace Context (z. B. traceparent).
      */
-    static fromHeaders(headers: Record<string, unknown> | undefined): TraceContext {
+    static fromHeaders(
+        headers: Record<string, unknown> | undefined,
+    ): TraceContext {
         if (!headers) return {};
 
         const get = (key: string) =>
@@ -28,7 +30,9 @@ export class TraceContextUtil {
 
         if (traceparent) {
             // Format: version-traceid-spanid-flags (z. B. 00-<traceId>-<spanId>-01)
-            const match = traceparent.match(/^(\w+)-(\w{32})-(\w{16})-(\w{2})$/);
+            const match = traceparent.match(
+                /^(\w+)-(\w{32})-(\w{16})-(\w{2})$/,
+            );
             if (match) {
                 const [, , traceId, spanId, flags] = match;
                 return {
@@ -54,4 +58,3 @@ export class TraceContextUtil {
         };
     }
 }
-

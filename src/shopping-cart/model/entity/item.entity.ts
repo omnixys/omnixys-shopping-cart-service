@@ -48,10 +48,7 @@ export class Item {
     })
     readonly updated: Date | undefined;
 
-    @ManyToOne(
-        () => ShoppingCart,
-        (shoppingCart) => shoppingCart.cartItems,
-    )
+    @ManyToOne(() => ShoppingCart, (shoppingCart) => shoppingCart.cartItems)
     @JoinColumn({ name: 'shopping_cart_id' })
     shoppingCart: import('./shopping-cart.entity.js').ShoppingCart | undefined;
 
@@ -70,4 +67,3 @@ export class Item {
         });
     };
 }
-

@@ -34,7 +34,9 @@ export class ShoppingCartQueryBuilder {
     ) {
         this.#shoppingCartRepository = repo;
         this.#loggerService = loggerService;
-        this.#logger = this.#loggerService.getLogger(ShoppingCartQueryBuilder.name);
+        this.#logger = this.#loggerService.getLogger(
+            ShoppingCartQueryBuilder.name,
+        );
     }
 
     buildId({ id, withItems }: FindByIdParams) {
@@ -55,27 +57,44 @@ export class ShoppingCartQueryBuilder {
         return queryBuilder;
     }
 
-
     /**
- * Erstellt einen QueryBuilder für einen Warenkorb anhand von Username oder CustomerId.
- *
- * @param options Objekt mit optionalem customerUsername oder customerId
- * @throws Error, wenn beide Werte fehlen
- * @returns Ein QueryBuilder mit Join und entsprechender Filterbedingung
- */
-    buildUsernameOrCustomerId({ customerUsername, customerId }: { customerUsername?: string, customerId?: UUID }) {
-        this.#logger.debug('buildUsernameOrCustomer: customerId=%s, customerUsername=%s', customerId, customerUsername)
+     * Erstellt einen QueryBuilder für einen Warenkorb anhand von Username oder CustomerId.
+     *
+     * @param options Objekt mit optionalem customerUsername oder customerId
+     * @throws Error, wenn beide Werte fehlen
+     * @returns Ein QueryBuilder mit Join und entsprechender Filterbedingung
+     */
+    buildUsernameOrCustomerId({
+        customerUsername,
+        customerId,
+    }: {
+        customerUsername?: string;
+        customerId?: UUID;
+    }) {
+        this.#logger.debug(
+            'buildUsernameOrCustomer: customerId=%s, customerUsername=%s',
+            customerId,
+            customerUsername,
+        );
 
         const queryBuilder = this.#shoppingCartRepository.createQueryBuilder(
             this.#shoppingCartAlias,
         );
 
         if (customerUsername) {
-            queryBuilder.where(`${this.#shoppingCartAlias}.customer_username = :username`, { username: customerUsername });
+            queryBuilder.where(
+                `${this.#shoppingCartAlias}.customer_username = :username`,
+                { username: customerUsername },
+            );
         } else if (customerId) {
-            queryBuilder.where(`${this.#shoppingCartAlias}.customer_id = :customerId`, { customerId });
+            queryBuilder.where(
+                `${this.#shoppingCartAlias}.customer_id = :customerId`,
+                { customerId },
+            );
         } else {
-            throw new Error('Entweder customerUsername oder customerId muss angegeben sein.');
+            throw new Error(
+                'Entweder customerUsername oder customerId muss angegeben sein.',
+            );
         }
 
         queryBuilder.leftJoinAndSelect(

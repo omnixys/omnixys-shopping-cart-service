@@ -1,9 +1,8 @@
- import { forwardRef, Global, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { KafkaModule } from '../messaging/kafka.module.js';
 import { TraceContextProvider } from './trace-context.provider.js';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TraceInterceptor } from './trace.interceptor.js';
-
 
 /**
  * Das Modul besteht aus allgemeinen Services, z.B. MailService.
@@ -14,19 +13,15 @@ import { TraceInterceptor } from './trace.interceptor.js';
  * Die dekorierte Modul-Klasse mit den Service-Klassen.
  */
 @Global()
-    @Module({
-        imports: [
-        forwardRef(() => KafkaModule),
+@Module({
+    imports: [forwardRef(() => KafkaModule)],
+    providers: [
+        TraceContextProvider,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TraceInterceptor,
+        },
     ],
-        providers: [
-            TraceContextProvider,
-            {
-                provide: APP_INTERCEPTOR,
-                useClass: TraceInterceptor,
-            },
-        ],
-        exports: [
-            TraceContextProvider,
-        ],
+    exports: [TraceContextProvider],
 })
-export class TraceModule { }
+export class TraceModule {}

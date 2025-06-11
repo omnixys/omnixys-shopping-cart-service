@@ -9,7 +9,6 @@ import { TraceModule } from '../trace/trace.module.js';
 import { OrchestratorHandler } from './handlers/orchestrator.handler.js';
 import { PersonHandler } from './handlers/person.handler.js';
 
-
 @Module({
     imports: [
         DiscoveryModule,
@@ -26,4 +25,4 @@ import { PersonHandler } from './handlers/person.handler.js';
     ],
     exports: [KafkaProducerService, KafkaConsumerService],
 })
-export class KafkaModule { }
+export class KafkaModule {}

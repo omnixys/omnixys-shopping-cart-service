@@ -10,11 +10,11 @@ import { ConfigModule } from '@nestjs/config';
         ConfigModule.forRoot({
             envFilePath: '.health.env',
             isGlobal: true,
-          }),
-    TerminusModule,
-    TypeOrmModule,
-  ],
-  controllers: [HealthController],
-  providers: [KafkaIndicator],
+        }),
+        TerminusModule,
+        TypeOrmModule,
+    ],
+    controllers: [HealthController],
+    providers: [KafkaIndicator],
 })
-export class HealthModule { }
+export class HealthModule {}

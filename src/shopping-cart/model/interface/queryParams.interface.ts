@@ -1,8 +1,7 @@
-
-import { Pageable } from "../../utils/pageable";
-import { UUID } from "crypto";
-import { ShoppingCart } from "../entity/shopping-cart.entity";
-import { SearchCriteria } from "../types/searchCriteria";
+import { Pageable } from '../../utils/pageable';
+import { UUID } from 'crypto';
+import { ShoppingCart } from '../entity/shopping-cart.entity';
+import { SearchCriteria } from '../types/searchCriteria';
 
 export interface FindByIdParams {
     readonly id: UUID;
@@ -10,10 +9,9 @@ export interface FindByIdParams {
     readonly withItems?: boolean;
 }
 
-
 export interface FindParams {
-    readonly searchCriteria: SearchCriteria,
-    readonly pageable: Pageable,
+    readonly searchCriteria: SearchCriteria;
+    readonly pageable: Pageable;
 }
 
 /** Typdefinitionen zum Aktualisieren eines Productes mit `update`. */

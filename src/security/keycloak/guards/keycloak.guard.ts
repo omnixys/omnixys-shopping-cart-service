@@ -1,5 +1,10 @@
-
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import {
+    CanActivate,
+    ExecutionContext,
+    ForbiddenException,
+    Injectable,
+    Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IS_PUBLIC_KEY } from '../constants.js';
@@ -10,17 +15,19 @@ export class KeycloakGuard implements CanActivate {
 
     readonly #reflector: Reflector;
     constructor(reflector: Reflector) {
-        this.#reflector = reflector
+        this.#reflector = reflector;
     }
 
     canActivate(context: ExecutionContext): boolean {
-        const isPublic = this.#reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-            context.getHandler(),
-            context.getClass(),
-        ]);
+        const isPublic = this.#reflector.getAllAndOverride<boolean>(
+            IS_PUBLIC_KEY,
+            [context.getHandler(), context.getClass()],
+        );
 
         if (isPublic) {
-            this.#logger.debug('🔓 Öffentliche Route erkannt – Zugriff erlaubt');
+            this.#logger.debug(
+                '🔓 Öffentliche Route erkannt – Zugriff erlaubt',
+            );
             return true;
         }
 
@@ -32,7 +39,9 @@ export class KeycloakGuard implements CanActivate {
             request?.body?.operationName === 'IntrospectionQuery';
 
         if (isIntrospection) {
-            this.#logger.debug('🧪 Introspectionsabfrage erkannt – Zugriff erlaubt');
+            this.#logger.debug(
+                '🧪 Introspectionsabfrage erkannt – Zugriff erlaubt',
+            );
             return true;
         }
 
@@ -45,7 +54,9 @@ export class KeycloakGuard implements CanActivate {
 
         if (!user) {
             this.#logger.warn('Kein Benutzer im Request gefunden');
-            throw new ForbiddenException('Zugriff verweigert – kein Benutzer gefunden');
+            throw new ForbiddenException(
+                'Zugriff verweigert – kein Benutzer gefunden',
+            );
         }
 
         const realmRoles = user.realm_access?.roles ?? [];
@@ -55,15 +66,19 @@ export class KeycloakGuard implements CanActivate {
         this.#logger.debug(`👤 Benutzer: ${user?.preferred_username}`);
         this.#logger.debug(`📛 Realm-Rollen: ${JSON.stringify(realmRoles)}`);
         this.#logger.debug(`📛 Client-Rollen: ${JSON.stringify(clientRoles)}`);
-        this.#logger.debug(`🔒 Erforderliche Rollen: ${JSON.stringify(requiredRoles)}`);
+        this.#logger.debug(
+            `🔒 Erforderliche Rollen: ${JSON.stringify(requiredRoles)}`,
+        );
 
         if (!requiredRoles.length) {
             return true; // keine Rollen gefordert = freier Zugriff
         }
 
-        const hasRole = requiredRoles.some(role => allRoles.includes(role));
+        const hasRole = requiredRoles.some((role) => allRoles.includes(role));
         if (!hasRole) {
-            throw new ForbiddenException(`Zugriff verweigert – fehlende Rolle(n): ${requiredRoles.join(', ')}`);
+            throw new ForbiddenException(
+                `Zugriff verweigert – fehlende Rolle(n): ${requiredRoles.join(', ')}`,
+            );
         }
 
         return true;
@@ -74,7 +89,9 @@ export class KeycloakGuard implements CanActivate {
         const classRef = context.getClass();
 
         // Nest-Keycloak-Connect speichert Metadaten unter dem Key 'roles'
-        const rolesMeta = Reflect.getMetadata('roles', handler) || Reflect.getMetadata('roles', classRef);
+        const rolesMeta =
+            Reflect.getMetadata('roles', handler) ||
+            Reflect.getMetadata('roles', classRef);
         if (!rolesMeta) return [];
 
         if (Array.isArray(rolesMeta)) {
@@ -87,7 +104,8 @@ export class KeycloakGuard implements CanActivate {
 
     private extractClientRoles(user: any): string[] {
         const resourceAccess = user.resource_access || {};
-        return Object.values(resourceAccess)
-            .flatMap((entry: any) => entry?.roles ?? []);
+        return Object.values(resourceAccess).flatMap(
+            (entry: any) => entry?.roles ?? [],
+        );
     }
 }

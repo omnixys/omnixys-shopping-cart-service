@@ -1,6 +1,5 @@
-import { ShoppingCart } from "../entity/shopping-cart.entity";
-import { CreateShoppingCartInput } from "../input/create-shopping-cart.input";
-
+import { ShoppingCart } from '../entity/shopping-cart.entity';
+import { CreateShoppingCartInput } from '../input/create-shopping-cart.input';
 
 /**
  * Wandelt ein CreateShoppingCartInput-Objekt in eine ShoppingCart-Entität um.
@@ -22,7 +21,6 @@ export function createShoppingCartInputToEntity(
         updated: new Date(),
     };
 }
-
 
 // export function createShoppingCartInputToShoppingCart(
 //     ShoppingCartDTO: CreateShoppingCartInput

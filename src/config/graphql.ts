@@ -16,7 +16,11 @@
  * GRAPHQL_SCHEMA=false // Nutzt ein einziges GraphQL-Schema.
  * ```
  */
-import { ApolloDriver, ApolloFederationDriver, type ApolloDriverConfig } from '@nestjs/apollo';
+import {
+    ApolloDriver,
+    ApolloFederationDriver,
+    type ApolloDriverConfig,
+} from '@nestjs/apollo';
 import path from 'node:path';
 import { RESOURCES_DIR } from './app.js';
 import { env } from './env.js';
@@ -29,9 +33,24 @@ if (GRAPHQL_SCHEMA === 'true') {
      * Pfade zu den GraphQL-Schema-Dateien, modularisiert nach Verantwortlichkeiten.
      */
     schemaGraphQL = [
-        path.join(RESOURCES_DIR, 'graphql', 'shopping-cart', 'shopping-cart.input.graphql'),
-        path.join(RESOURCES_DIR, 'graphql', 'shopping-cart', 'shopping-cart.type.graphql'),
-        path.join(RESOURCES_DIR, 'graphql', 'shopping-cart', 'shopping-cart.schema.graphql'),
+        path.join(
+            RESOURCES_DIR,
+            'graphql',
+            'shopping-cart',
+            'shopping-cart.input.graphql',
+        ),
+        path.join(
+            RESOURCES_DIR,
+            'graphql',
+            'shopping-cart',
+            'shopping-cart.type.graphql',
+        ),
+        path.join(
+            RESOURCES_DIR,
+            'graphql',
+            'shopping-cart',
+            'shopping-cart.schema.graphql',
+        ),
     ];
 
     // Debug-Ausgabe zur Überprüfung der geladenen Pfade

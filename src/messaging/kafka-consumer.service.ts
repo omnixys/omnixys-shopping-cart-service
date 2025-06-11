@@ -5,10 +5,15 @@ import { KafkaEventDispatcherService } from './kafka-event-dispatcher.service.js
 import type { KafkaEventContext } from './interface/kafka-event.interface.js';
 import { LoggerService } from '../logger/logger.service.js';
 import { TraceContextUtil } from '../trace/trace-context.util.js';
-import { context as otelContext, SpanContext, SpanKind, SpanStatusCode, trace, Tracer } from '@opentelemetry/api';
+import {
+    context as otelContext,
+    SpanContext,
+    SpanKind,
+    SpanStatusCode,
+    trace,
+    Tracer,
+} from '@opentelemetry/api';
 import { LoggerPlus } from '../logger/logger-plus.js';
-
-
 
 /**
  * Kafka Consumer zur Registrierung von Topic-Handlern.
@@ -21,7 +26,6 @@ export class KafkaConsumerService implements OnApplicationShutdown {
 
     readonly #dispatcher: KafkaEventDispatcherService;
     readonly #loggerService: LoggerService;
-
 
     constructor(
         dispatcher: KafkaEventDispatcherService,
@@ -39,7 +43,10 @@ export class KafkaConsumerService implements OnApplicationShutdown {
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 const headers = Object.fromEntries(
-                    Object.entries(message.headers ?? {}).map(([key, val]) => [key, val?.toString()])
+                    Object.entries(message.headers ?? {}).map(([key, val]) => [
+                        key,
+                        val?.toString(),
+                    ]),
                 );
 
                 // ⬅️ 1. TraceContext aus Kafka-Headers extrahieren (W3C oder B3)
@@ -78,7 +85,9 @@ export class KafkaConsumerService implements OnApplicationShutdown {
                 await otelContext.with(spanCtx, async () => {
                     try {
                         const valueBuffer = message.value;
-                        const value = valueBuffer ? Buffer.from(valueBuffer).toString() : '{}';
+                        const value = valueBuffer
+                            ? Buffer.from(valueBuffer).toString()
+                            : '{}';
                         const payload = JSON.parse(value);
 
                         const eventName = headers['x-event-name'] ?? topic;
@@ -102,18 +111,28 @@ export class KafkaConsumerService implements OnApplicationShutdown {
                             .getLogger(KafkaConsumerService.name)
                             .withContext(traceContext);
 
-                        await logger.info(`Event erfolgreich empfangen: ${eventName}`);
+                        await logger.info(
+                            `Event erfolgreich empfangen: ${eventName}`,
+                        );
 
                         // ⬅️ 6. Event an passenden Handler weiterreichen
-                        await this.#dispatcher.dispatch(eventName, payload, kafkaContext);
+                        await this.#dispatcher.dispatch(
+                            eventName,
+                            payload,
+                            kafkaContext,
+                        );
 
                         span.setStatus({ code: SpanStatusCode.OK });
                     } catch (err) {
                         span.recordException(err as Error);
-                        span.setStatus({ code: SpanStatusCode.ERROR, message: (err as Error).message });
+                        span.setStatus({
+                            code: SpanStatusCode.ERROR,
+                            message: (err as Error).message,
+                        });
 
-                        const fallbackLogger = this.#loggerService
-                            .getLogger(KafkaConsumerService.name);
+                        const fallbackLogger = this.#loggerService.getLogger(
+                            KafkaConsumerService.name,
+                        );
                         fallbackLogger.error('Kafka-Consumer-Fehler: %o', err);
 
                         throw err;
@@ -126,7 +145,6 @@ export class KafkaConsumerService implements OnApplicationShutdown {
 
         this.consumers.push(consumer);
     }
-
 
     async onApplicationShutdown(): Promise<void> {
         for (const consumer of this.consumers) {

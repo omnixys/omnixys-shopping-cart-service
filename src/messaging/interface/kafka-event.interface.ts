@@ -8,5 +8,9 @@ export interface KafkaEventContext {
 }
 
 export interface KafkaEventHandler {
-    handle(topic: string, data: unknown, context: KafkaEventContext): Promise<void>;
+    handle(
+        topic: string,
+        data: unknown,
+        context: KafkaEventContext,
+    ): Promise<void>;
 }

@@ -1,5 +1,9 @@
 // src/kafka/kafka-producer.service.ts
-import { Injectable, OnModuleInit, OnApplicationShutdown } from '@nestjs/common';
+import {
+    Injectable,
+    OnModuleInit,
+    OnApplicationShutdown,
+} from '@nestjs/common';
 import { Kafka, Message, Producer, ProducerRecord } from 'kafkajs';
 import { kafkaBroker } from '../config/kafka.js';
 import { TraceContext } from '../trace/trace-context.util.js';
@@ -11,7 +15,9 @@ import { context, SpanStatusCode, trace, Tracer } from '@opentelemetry/api';
  * Kafka Producer zum Senden von Nachrichten.
  */
 @Injectable()
-export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown {
+export class KafkaProducerService
+    implements OnModuleInit, OnApplicationShutdown
+{
     private readonly kafka = new Kafka({ brokers: [kafkaBroker] });
     private readonly producer: Producer = this.kafka.producer();
     private readonly tracer: Tracer = trace.getTracer('kafka-producer');
@@ -24,22 +30,37 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
      * Sende ein vollständiges ProducerRecord.
      */
     async produce(record: ProducerRecord): Promise<void> {
-        await this.tracer.startActiveSpan('kafka.producer.send', async (span) => {
-            try {
-                span.setAttribute('kafka.topic', record.topic);
-                span.setAttribute('kafka.message.count', record.messages.length);
+        await this.tracer.startActiveSpan(
+            'kafka.producer.send',
+            async (span) => {
+                try {
+                    span.setAttribute('kafka.topic', record.topic);
+                    span.setAttribute(
+                        'kafka.message.count',
+                        record.messages.length,
+                    );
 
-                await context.with(trace.setSpanContext(context.active(), span.spanContext()), async () => {
-                    await this.producer.send(record);
-                });
-            } catch (err) {
-                span.recordException(err as Error);
-                span.setStatus({ code: SpanStatusCode.ERROR, message: 'Kafka Send Failed' });
-                throw err;
-            } finally {
-                span.end();
-            }
-        });
+                    await context.with(
+                        trace.setSpanContext(
+                            context.active(),
+                            span.spanContext(),
+                        ),
+                        async () => {
+                            await this.producer.send(record);
+                        },
+                    );
+                } catch (err) {
+                    span.recordException(err as Error);
+                    span.setStatus({
+                        code: SpanStatusCode.ERROR,
+                        message: 'Kafka Send Failed',
+                    });
+                    throw err;
+                } finally {
+                    span.end();
+                }
+            },
+        );
     }
 
     /**
@@ -60,31 +81,46 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
         version = 'v1',
         traceContext?: TraceContext,
     ): Promise<void> {
-        const span = this.tracer.startSpan(`kafka.producer.send.${topic}.${eventName}`, {
-
-            attributes: {
-                'messaging.system': 'kafka',
-                'messaging.destination': topic,
-                'messaging.destination_kind': 'topic',
-                'messaging.operation': eventName,
-                'messaging.kafka.message_type': payload?.constructor?.name || typeof payload,
+        const span = this.tracer.startSpan(
+            `kafka.producer.send.${topic}.${eventName}`,
+            {
+                attributes: {
+                    'messaging.system': 'kafka',
+                    'messaging.destination': topic,
+                    'messaging.destination_kind': 'topic',
+                    'messaging.operation': eventName,
+                    'messaging.kafka.message_type':
+                        payload?.constructor?.name || typeof payload,
+                },
             },
-        });
+        );
 
         try {
-            const headers = KafkaHeaderBuilder.buildStandardHeaders(topic, eventName, traceContext, version, service);
+            const headers = KafkaHeaderBuilder.buildStandardHeaders(
+                topic,
+                eventName,
+                traceContext,
+                version,
+                service,
+            );
 
             const message: Message = {
                 value: Buffer.from(JSON.stringify(payload)), // 👈 explizit JSON
                 headers,
             };
 
-            await context.with(trace.setSpanContext(context.active(), span.spanContext()), async () => {
-                await this.producer.send({ topic, messages: [message] });
-            });
+            await context.with(
+                trace.setSpanContext(context.active(), span.spanContext()),
+                async () => {
+                    await this.producer.send({ topic, messages: [message] });
+                },
+            );
             span.setStatus({ code: SpanStatusCode.OK });
         } catch (err) {
-            span.setStatus({ code: SpanStatusCode.ERROR, message: (err as Error).message });
+            span.setStatus({
+                code: SpanStatusCode.ERROR,
+                message: (err as Error).message,
+            });
             throw err;
         } finally {
             span.end();
@@ -97,7 +133,14 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
         trace?: TraceContext,
     ): Promise<void> {
         const topic = KafkaTopics.inventory.reserve;
-        await this.sendEvent(topic, 'reserveItem', payload, service, 'v1', trace);
+        await this.sendEvent(
+            topic,
+            'reserveItem',
+            payload,
+            service,
+            'v1',
+            trace,
+        );
     }
 
     async releaseItem(
@@ -106,12 +149,19 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
         trace?: TraceContext,
     ): Promise<void> {
         const topic = KafkaTopics.inventory.release;
-        await this.sendEvent(topic, 'releaseItem', payload, service, 'v1', trace);
+        await this.sendEvent(
+            topic,
+            'releaseItem',
+            payload,
+            service,
+            'v1',
+            trace,
+        );
     }
 
     /**
-   * Spezifischer Shortcut zum Versenden von Mail-Nachrichten.
-   */
+     * Spezifischer Shortcut zum Versenden von Mail-Nachrichten.
+     */
     async sendMailNotification(
         eventType: 'create' | 'delete',
         payload: unknown,
@@ -123,7 +173,14 @@ export class KafkaProducerService implements OnModuleInit, OnApplicationShutdown
                 ? KafkaTopics.notification.create
                 : KafkaTopics.notification.delete;
 
-        await this.sendEvent(topic, `sendMail.${eventType}`, payload, service, 'v1', trace);
+        await this.sendEvent(
+            topic,
+            `sendMail.${eventType}`,
+            payload,
+            service,
+            'v1',
+            trace,
+        );
     }
 
     async onApplicationShutdown(): Promise<void> {

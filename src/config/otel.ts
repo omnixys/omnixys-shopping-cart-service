@@ -18,15 +18,20 @@ import { env } from './env.js';
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
 
 const traceExporter = new OTLPTraceExporter({
-    url: env.TEMPO_URI
+    url: env.TEMPO_URI,
 });
 
-const prometheusExporter = new PrometheusExporter({
-    port: 9464,
-    endpoint: '/metrics',
-}, () => {
-    console.log('✅ Prometheus exporter läuft auf http://localhost:9464/metrics');
-});
+const prometheusExporter = new PrometheusExporter(
+    {
+        port: 9464,
+        endpoint: '/metrics',
+    },
+    () => {
+        console.log(
+            '✅ Prometheus exporter läuft auf http://localhost:9464/metrics',
+        );
+    },
+);
 
 let sdk: NodeSDK; // <<< global deklariert
 
@@ -37,9 +42,11 @@ export async function startOtelSDK() {
 
     const resource = defaultResource()
         .merge(detected)
-        .merge(resourceFromAttributes({
-            'service.name': 'shopping-cart-service',
-        }));
+        .merge(
+            resourceFromAttributes({
+                'service.name': 'shopping-cart-service',
+            }),
+        );
 
     sdk = new NodeSDK({
         traceExporter,
@@ -49,7 +56,9 @@ export async function startOtelSDK() {
     });
 
     await sdk.start();
-    console.log('✅ OpenTelemetry gestartet – mit service.name = shopping-cart-service');
+    console.log(
+        '✅ OpenTelemetry gestartet – mit service.name = shopping-cart-service',
+    );
 }
 
 export async function shutdownOtelSDK() {

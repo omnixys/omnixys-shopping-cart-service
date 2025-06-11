@@ -4,7 +4,6 @@ const dbConfig = config.db;
 
 type DbType = 'postgres' | 'mysql' | 'sqlite';
 
-
 const type: DbType | undefined = dbConfig?.type;
 
 export const dbType =

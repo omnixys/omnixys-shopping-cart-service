@@ -10,14 +10,14 @@ export const KafkaTopics = {
     },
     orchestrator: {
         shutdown: 'shopping-cart.shutdown.orchestrator',
-        start: "shopping-cart.start.orchestrator",
-        restart:  "shopping-cart.restart.orchestrator",
+        start: 'shopping-cart.start.orchestrator',
+        restart: 'shopping-cart.restart.orchestrator',
 
         all: {
-            shutdown: "all.shutdown.orchestrator",
-            start: "all.start.orchestrator",
-            restart: "all.restart.orchestrator",
-        }
+            shutdown: 'all.shutdown.orchestrator',
+            start: 'all.start.orchestrator',
+            restart: 'all.restart.orchestrator',
+        },
     },
     notification: {
         create: 'notification.create.shopping-cart',
@@ -30,7 +30,7 @@ export const KafkaTopics = {
     inventory: {
         reserve: 'inventory.reserve-item.shopping-cart',
         release: 'inventory.release-item.shopping-cart',
-    }
+    },
 } as const;
 
 /**
@@ -45,7 +45,7 @@ export type KafkaTopicsType = typeof KafkaTopics;
 export function getAllKafkaTopics(): string[] {
     const flatten = (obj: any): string[] =>
         Object.values(obj).flatMap((value) =>
-            typeof value === 'string' ? [value] : flatten(value)
+            typeof value === 'string' ? [value] : flatten(value),
         );
     return flatten(KafkaTopics);
 }

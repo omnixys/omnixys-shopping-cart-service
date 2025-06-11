@@ -1,9 +1,7 @@
 /* eslint-disable camelcase, @typescript-eslint/naming-convention */
 
 import { Injectable } from '@nestjs/common';
-import axios, {
-    type AxiosInstance,
-} from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 import {
     type KeycloakConnectOptions,
     type KeycloakConnectOptionsFactory,
@@ -21,7 +19,6 @@ export type TokenData = {
 
 @Injectable()
 export class KeycloakService implements KeycloakConnectOptionsFactory {
-
     readonly #keycloakClient: AxiosInstance;
 
     readonly #logger = getLogger(KeycloakService.name);
@@ -40,9 +37,10 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
 
     async getToken(context: any) {
         const rawAuth = context.req?.headers?.authorization;
-        const token = typeof rawAuth === 'string' && rawAuth.startsWith('Bearer ')
-            ? rawAuth.slice(7)
-            : null;
+        const token =
+            typeof rawAuth === 'string' && rawAuth.startsWith('Bearer ')
+                ? rawAuth.slice(7)
+                : null;
 
         const [, payloadStr] = (token as string).split('.');
         const payloadDecoded = atob(payloadStr);
@@ -50,9 +48,9 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         const { exp, realm_access, preferred_username, email } = payload;
         this.#logger.debug('getToken: exp=%s', exp);
         const { roles } = realm_access;
-        this.#logger.debug('getToken: roles=%o ', roles)
+        this.#logger.debug('getToken: roles=%o ', roles);
 
-        return { username: preferred_username, email, roles, token }
+        return { username: preferred_username, email, roles, token };
     }
 }
 /* eslint-enable camelcase, @typescript-eslint/naming-convention */

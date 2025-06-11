@@ -3,8 +3,14 @@ import { KafkaProducerService } from '../messaging/kafka-producer.service.js';
 import { TraceContext } from '../trace/trace-context.util.js';
 import { KafkaTopics } from '../messaging/kafka-topic.properties.js';
 import { format } from 'util';
-import { trace, context, SpanKind, SpanStatusCode, SpanContext, Tracer } from '@opentelemetry/api';
-
+import {
+    trace,
+    context,
+    SpanKind,
+    SpanStatusCode,
+    SpanContext,
+    Tracer,
+} from '@opentelemetry/api';
 
 const LogLevel = {
     TRACE: 'TRACE',
@@ -31,7 +37,6 @@ export class LoggerPlus {
     readonly #kafka: KafkaProducerService;
     readonly #serviceName: string;
     readonly #tracer: Tracer;
-
 
     constructor(
         context: string,
@@ -94,7 +99,11 @@ export class LoggerPlus {
         // Optionale Span-Verlinkung bei manuellem TraceContext
         const links: { context: SpanContext }[] = [];
 
-        if (isExternalTraceContext && traceContext?.traceId && traceContext?.spanId) {
+        if (
+            isExternalTraceContext &&
+            traceContext?.traceId &&
+            traceContext?.spanId
+        ) {
             links.push({
                 context: {
                     traceId: traceContext.traceId,
@@ -135,7 +144,10 @@ export class LoggerPlus {
                     span.setStatus({ code: SpanStatusCode.OK });
                 } catch (err) {
                     span.recordException(err as Error);
-                    span.setStatus({ code: SpanStatusCode.ERROR, message: (err as Error).message });
+                    span.setStatus({
+                        code: SpanStatusCode.ERROR,
+                        message: (err as Error).message,
+                    });
                 } finally {
                     span.end();
                 }
@@ -177,4 +189,3 @@ export class LoggerPlus {
 // Verwendung:
 // const logger = loggerService.getLogger(MyService.name).withContext(traceContext);
 // await logger.info('myMethod', 'Meine Nachricht');
-

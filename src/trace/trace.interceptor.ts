@@ -12,11 +12,9 @@ import { TraceContextUtil } from './trace-context.util.js';
 export class TraceInterceptor implements NestInterceptor {
     readonly #traceContextProvider: TraceContextProvider;
 
-        constructor(
-            traceContextProvider: TraceContextProvider,
-        ) {
-            this.#traceContextProvider = traceContextProvider;
-        }
+    constructor(traceContextProvider: TraceContextProvider) {
+        this.#traceContextProvider = traceContextProvider;
+    }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
