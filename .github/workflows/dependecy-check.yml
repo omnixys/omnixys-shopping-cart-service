@@ -1,4 +1,4 @@
-name: Dependency Check – Invoice
+name: Dependency Check – Shopping Cart
 
 on:
   workflow_dispatch: # Manuelles Auslösen
@@ -10,38 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java-version: [24]
+        node-version: [23]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Java ${{ matrix.java-version }}
-        uses: actions/setup-java@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.java-version }}
-          cache: maven
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      - name: Cache Maven Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Install Versions Plugin
-        run: mvn org.codehaus.mojo:versions-maven-plugin:2.15.0:display-dependency-updates
-
-      - name: Save report
+      - name: Run npm audit
         run: |
           mkdir -p reports
-          mvn org.codehaus.mojo:versions-maven-plugin:2.15.0:dependency-updates-report
-          cp target/site/dependency-updates-report.html reports/
+          npm audit --json > reports/audit-report.json
+          jq '.' reports/audit-report.json > reports/audit-report-pretty.json
 
-      - name: Upload dependency update report
+      - name: Check outdated packages
+        run: |
+          npm outdated --json > reports/outdated.json || true
+          jq '.' reports/outdated.json > reports/outdated-pretty.json || true
+
+      - name: Upload Reports
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-updates-report
-          path: reports/dependency-updates-report.html
+          name: node-dependency-reports
+          path: reports/
