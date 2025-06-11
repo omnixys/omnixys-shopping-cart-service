@@ -54,7 +54,7 @@ docker-compose up
 
 ## 📬 GraphQL-Endpunkt
 
-```http
+```text
 http://localhost:7101/graphql
 ```
 
