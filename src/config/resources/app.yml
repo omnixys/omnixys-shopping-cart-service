@@ -29,6 +29,10 @@ db:
   passwordAdmin: p
   # name: shopping_cart_db_user
 
+  testDB: test_db
+  testUsername: TEST_SERVER_PORT=9002
+  testPassword: Omnixys03.06.2025
+
 # ==============================================================================
 # K A F K A
 # ==============================================================================

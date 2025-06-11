@@ -13,11 +13,12 @@ import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { env } from './env.js';
 
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
 
 const traceExporter = new OTLPTraceExporter({
-    url: 'http://localhost:4318/v1/traces',
+    url: env.TEMPO_URI
 });
 
 const prometheusExporter = new PrometheusExporter({

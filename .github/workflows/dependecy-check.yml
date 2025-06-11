@@ -1,0 +1,47 @@
+name: Dependency Check – Invoice
+
+on:
+  workflow_dispatch: # Manuelles Auslösen
+  schedule:
+    - cron: "0 12 * * 1" # Jeden Montag um 12:00 Uhr UTC
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [24]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+          cache: maven
+
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven
+
+      - name: Install Versions Plugin
+        run: mvn org.codehaus.mojo:versions-maven-plugin:2.15.0:display-dependency-updates
+
+      - name: Save report
+        run: |
+          mkdir -p reports
+          mvn org.codehaus.mojo:versions-maven-plugin:2.15.0:dependency-updates-report
+          cp target/site/dependency-updates-report.html reports/
+
+      - name: Upload dependency update report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-updates-report
+          path: reports/dependency-updates-report.html

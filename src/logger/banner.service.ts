@@ -25,7 +25,7 @@ export class BannerService implements OnApplicationBootstrap {
      * @description Wird beim Bootstrap der Anwendung ausgeführt, um Anwendungsinformationen und ein Banner auszugeben.
      */
     onApplicationBootstrap() {
-        const { host, nodeEnv, port, databaseName, httpsOptions } = nodeConfig;
+        const { host, nodeEnv, port, databaseName, httpsOptions, tempo } = nodeConfig;
 
         // Überprüfen, ob HTTPS oder HTTP verwendet wird
         const protocol = httpsOptions === undefined ? 'http' : 'https';
@@ -60,6 +60,7 @@ export class BannerService implements OnApplicationBootstrap {
         this.#logger.info(
             chalk.cyan('Swagger UI: ') + chalk.yellowBright('/swagger'),
         );
+        this.#logger.info(chalk.cyan('Tempo URI: ') + chalk.yellow(tempo!));
         this.#logger.info(chalk.green('===============================')); // Endmarkierung für die Anwendungsinformationen
     }
 

@@ -1,10 +1,10 @@
-import { config } from './shopping-cart.js';
+import { config } from './app.js';
 
 const dbConfig = config.db;
 
 type DbType = 'postgres' | 'mysql' | 'sqlite';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
 const type: DbType | undefined = dbConfig?.type;
 
 export const dbType =

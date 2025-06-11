@@ -60,7 +60,7 @@ const tokenValidation =
     (keycloak?.tokenValidation as TokenValidation | undefined) ??
     (TokenValidation.ONLINE as TokenValidation);
 
-const { CLIENT_SECRET, NODE_ENV } = env;
+const { KC_SERVICE_SECRET, NODE_ENV } = env;
 
 // https://github.com/ferrerojosh/nest-keycloak-connect/blob/master/README.md#nest-keycloak-options
 export const keycloakConnectOptions: KeycloakConnectConfig = {
@@ -68,7 +68,7 @@ export const keycloakConnectOptions: KeycloakConnectConfig = {
     realm,
     clientId,
     secret:
-        CLIENT_SECRET ??
+        KC_SERVICE_SECRET ??
         'ERROR: Umgebungsvariable CLIENT_SECRET nicht gesetzt!',
     policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     tokenValidation,

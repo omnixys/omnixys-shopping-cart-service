@@ -1,17 +1,47 @@
 
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { IS_PUBLIC_KEY } from '../constants.js';
 
 @Injectable()
 export class KeycloakGuard implements CanActivate {
     #logger = new Logger(KeycloakGuard.name);
 
+    readonly #reflector: Reflector;
+    constructor(reflector: Reflector) {
+        this.#reflector = reflector
+    }
+
     canActivate(context: ExecutionContext): boolean {
+        const isPublic = this.#reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        if (isPublic) {
+            this.#logger.debug('🔓 Öffentliche Route erkannt – Zugriff erlaubt');
+            return true;
+        }
+
         const ctx = GqlExecutionContext.create(context);
         const request = ctx.getContext().req;
 
+        const isIntrospection =
+            request?.headers?.['x-introspection'] === 'true' ||
+            request?.body?.operationName === 'IntrospectionQuery';
+
+        if (isIntrospection) {
+            this.#logger.debug('🧪 Introspectionsabfrage erkannt – Zugriff erlaubt');
+            return true;
+        }
+
         const user = request.user;
         const requiredRoles = this.getRequiredRoles(context);
+
+        if (!requiredRoles.length) {
+            return true; // keine Rollen gefordert = freier Zugriff
+        }
 
         if (!user) {
             this.#logger.warn('Kein Benutzer im Request gefunden');

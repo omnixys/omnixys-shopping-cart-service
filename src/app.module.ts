@@ -14,10 +14,12 @@ import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
 import { KafkaModule } from './messaging/kafka.module.js';
 import { ShoppingCartModule } from './shopping-cart/shopping-cart.module.js';
+import { HealthModule } from './health/health.module.js';
 
 @Module({
     imports: [
         AdminModule,
+        HealthModule,
         DevModule,
         GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions2),
         LoggerModule,

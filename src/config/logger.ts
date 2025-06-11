@@ -1,7 +1,7 @@
 import { env } from './env.js';
 import { nodeConfig } from './node.js';
 import { resolve } from 'node:path';
-import { config } from './shopping-cart.js';
+import { config } from './app.js';
 import pino from 'pino';
 import { PrettyOptions } from 'pino-pretty';
 
@@ -67,11 +67,11 @@ const prettyTransportOptions = {
 
 const options: pino.TransportMultiOptions | pino.TransportSingleOptions = pretty
     ? {
-          targets: [fileOptions, prettyTransportOptions],
-      }
+        targets: [fileOptions, prettyTransportOptions],
+    }
     : {
-          targets: [fileOptions],
-      };
+        targets: [fileOptions],
+    };
 // in pino: type ThreadStream = any
 // type-coverage:ignore-next-line
 const transports = pino.transport(options); // eslint-disable-line @typescript-eslint/no-unsafe-assignment

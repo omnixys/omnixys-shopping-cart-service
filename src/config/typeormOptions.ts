@@ -1,11 +1,10 @@
 import { loggerDefaultValue } from './logger.js';
 import { nodeConfig } from './node.js';
-// import { nodeConfig } from './node';
 import { resolve } from 'node:path';
 import { type DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from './typeormNamingStrategy.js';
 import { dbType } from './db.js';
-import { BASEDIR, config } from './shopping-cart.js';
+import { BASEDIR, config } from './app.js';
 import { entities } from '../shopping-cart/model/entity/entities.js';
 import { ShoppingCart } from '../shopping-cart/model/entity/shopping-cart.entity.js';
 
@@ -41,7 +40,6 @@ console.debug(
 );
 
 // TODO records als "deeply immutable data structure" (Stage 2)
-// https://github.com/tc39/proposal-record-tuple
 let dataSourceOptions: DataSourceOptions;
 switch (dbType) {
     case 'postgres': {

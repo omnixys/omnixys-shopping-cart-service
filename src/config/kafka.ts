@@ -1,4 +1,4 @@
-import { config } from './shopping-cart.js';
+import { config } from './app.js';
 
 const { kafka } = config;
 
